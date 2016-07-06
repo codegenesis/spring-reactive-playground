@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2002-2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package playground.kafka;
+package playground.couchbase;
 
 import playground.Person;
 import reactor.core.publisher.Flux;
@@ -28,29 +28,33 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-@Profile("kafka")
+/**
+ * @author Sebastien Deleuze
+ */
+@Profile("couchbase")
 @RestController
-public class KafkaPersonController {
+public class CouchbasePersonController {
 
-	private final ReactiveKafkaPersonRepository repository;
+    private final CouchbasePersonRepository repository;
 
-	@Autowired
-	public KafkaPersonController(ReactiveKafkaPersonRepository repository) {
-		this.repository = repository;
-	}
+    @Autowired
+    public CouchbasePersonController(CouchbasePersonRepository repository) {
+        this.repository = repository;
+    }
 
-	@RequestMapping(path = "/kafka", method = RequestMethod.POST)
-	public Mono<Void> create(@RequestBody Flux<Person> personStream) {
-		return this.repository.save(personStream).then();
-	}
+    @RequestMapping(path = "/couchbase", method = RequestMethod.POST)
+    public Mono<Void> create(@RequestBody Flux<Person> personStream) {
+        return this.repository.insert(personStream);
+    }
 
-	@RequestMapping(path = "/kafka", method = RequestMethod.GET)
-	public Flux<Person> list() {
-		return this.repository.findAll();
-	}
+    @RequestMapping(path = "/couchbase", method = RequestMethod.GET)
+    public Flux<Person> list() {
+        return this.repository.list();
+    }
 
-	@RequestMapping(path = "/kafka/{id}", method = RequestMethod.GET)
+    @RequestMapping(path = "/couchbase/{id}", method = RequestMethod.GET)
     public Mono<Person> findById(@PathVariable String id) {
-		return this.repository.findOne(id);
-	}
+        return this.repository.findById(id);
+    }
+
 }

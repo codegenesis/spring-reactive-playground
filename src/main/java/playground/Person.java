@@ -27,6 +27,7 @@ public class Person {
 
 	private String lastname;
 
+    private String validationDate;
 
 	public Person() {
 	}
@@ -35,6 +36,7 @@ public class Person {
 		this.id = id;
 		this.firstname = firstname;
 		this.lastname = lastname;
+        this.validationDate = "";
 	}
 
 
@@ -61,6 +63,14 @@ public class Person {
 	public void setLastname(String lastname) {
 		this.lastname = lastname;
 	}
+
+    public String getValidationDate() {
+        return validationDate;
+    }
+
+    public void setValidationDate(String validationDate) {
+        this.validationDate = validationDate;
+    }
 
 	@Override
 	public boolean equals(Object o) {
@@ -99,6 +109,7 @@ public class Person {
 				"id='" + id + '\'' +
 				", firstname='" + firstname + '\'' +
 				", lastname='" + lastname + '\'' +
+                ", validationDate='" + validationDate + '\'' +
 				'}';
 	}
 }

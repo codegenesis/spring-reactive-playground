@@ -50,14 +50,14 @@ public class ReactiveKafkaPersonRepository implements ReactiveCrudRepository<Per
 
 	@Autowired
 	public ReactiveKafkaPersonRepository(FluxConfig<String, Person> kafkaFluxConfig, KafkaSender<String, Person> kafkaSender,
-	        String topic, long receiveTimeoutMillis) {
+	        String topic, Duration receiveTimeout) {
 		this.kafkaFluxConfig = kafkaFluxConfig;
 		this.kafkaSender = kafkaSender;
 		this.topic = topic;
 		int partitions = kafkaSender.partitionsFor(topic).block().size();
         for (int i = 0; i < partitions; i++)
             topicPartitions.add(new TopicPartition(topic, i));
-		this.receiveTimeout = Duration.ofMillis(receiveTimeoutMillis);
+		this.receiveTimeout = receiveTimeout;
 	}
 
 

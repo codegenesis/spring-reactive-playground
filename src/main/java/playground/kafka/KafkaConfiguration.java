@@ -51,19 +51,20 @@ public class KafkaConfiguration {
     private long receiveTimeoutMillis;
 
 	@Bean
-	FluxConfig<String, Person> fluxConfig() {
+	public FluxConfig<String, Person> fluxConfig() {
 	    Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, PersonSerde.class.getName());
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId());
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
 
 	    return new FluxConfig<String, Person>(props).pollTimeout(Duration.ofMillis(1000));
 	}
 
 	@Bean
-    SenderConfig<String, Person> senderConfig() {
+    public SenderConfig<String, Person> senderConfig() {
         Map<String, Object> props = new HashMap<>();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
@@ -73,22 +74,22 @@ public class KafkaConfiguration {
     }
 
 	@Bean
-    KafkaSender<String, Person> kafkaSender() {
+    public KafkaSender<String, Person> kafkaSender() {
         return new KafkaSender<>(senderConfig());
     }
 
 	@Bean
-    String groupId() {
+    public String groupId() {
 	    return groupId;
     }
 
     @Bean
-    String topic() {
+    public String topic() {
         return topic;
     }
 
     @Bean
-    long receiveTimeoutMillis() {
-        return receiveTimeoutMillis;
+    public Duration receiveTimeout() {
+        return Duration.ofMillis(receiveTimeoutMillis);
     }
 }
