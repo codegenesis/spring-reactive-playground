@@ -72,13 +72,12 @@ public class EtlController {
         return kafkaConnector.createFlux()
                              .doOnSubscribe(s ->
                                     source.findAll()                                                  // Extract from MongoDB source
-                                                 .flatMap(person -> kafkaConnector.store(person))     // store in Kafka
-                                                 .subscribe()
+                                          .flatMap(person -> kafkaConnector.store(person))            // store in Kafka
+                                          .subscribe()
                                   )
                              .map(kafkaMessage -> new PersonRecord(kafkaMessage).validate())          // Transform messages consumed from Kafka
                              .window(sinkBufferSize, sinkBufferTimeout)                               // batch outgoing
                              .flatMap(recordList -> sink.put(recordList));                            // Load into sink warehouse
-
     }
 
     private static class PersonRecord implements Sink.Record<String, Person> {
