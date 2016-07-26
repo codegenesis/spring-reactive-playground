@@ -17,11 +17,11 @@
 package playground.kafkahttp;
 
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.kafka.KafkaSender;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
@@ -31,14 +31,13 @@ public class ReactiveKafkaHttpSender {
 
     private final KafkaSender<String, byte[]> kafkaSender;
 
-	@Autowired
 	public ReactiveKafkaHttpSender(KafkaSender<String, byte[]> kafkaSender) {
 		this.kafkaSender = kafkaSender;
 	}
 
-    public Flux<Integer> send(String topic, Publisher<Records> entityStream) {
-        return Flux.from(entityStream)
-                .concatMap(p -> kafkaSender.send(new ProducerRecord<String, byte[]>(topic, p.getRecords()[0].getValue()))
-                                           .map(r -> r.partition()));
+    public Flux<RecordMetadata> sendToKafka(String topic, Publisher<Records> recordStream) {
+        return Flux.from(recordStream)
+                   .concatMap(records -> Flux.fromArray(records.getRecords()))
+                   .concatMap(r -> kafkaSender.send(new ProducerRecord<>(topic, r.getValue())));
     }
 }

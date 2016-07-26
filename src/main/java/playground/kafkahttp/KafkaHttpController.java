@@ -17,9 +17,7 @@
 package playground.kafkahttp;
 
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,13 +31,13 @@ public class KafkaHttpController {
 
 	private final ReactiveKafkaHttpSender sender;
 
-	@Autowired
 	public KafkaHttpController(ReactiveKafkaHttpSender sender) {
 		this.sender = sender;
 	}
 
 	@RequestMapping(path = "/kafkahttp/{topic}", method = RequestMethod.POST)
-	public Mono<Void> create(@PathVariable String topic, @RequestBody Flux<Records> binaryStream) {
-		return this.sender.send(topic, binaryStream).then();
+	public Flux<SendResponse> sendToKafka(@PathVariable String topic, @RequestBody Flux<Records> binaryStream) {
+		return this.sender.sendToKafka(topic, binaryStream)
+		           .map(metadata -> new SendResponse(metadata));
 	}
 }

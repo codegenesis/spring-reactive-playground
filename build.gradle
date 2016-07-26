@@ -22,6 +22,7 @@ jar {
 }
 
 repositories {
+	mavenLocal()
 	mavenCentral()
 	maven { url 'https://oss.jfrog.org/libs-snapshot' }  // RxNetty 0.5.x snapshots
 	maven { url "https://repo.spring.io/snapshot" }
@@ -33,7 +34,13 @@ ext['spring.version'] = '5.0.0.BUILD-SNAPSHOT'
 
 dependencies {
 	// Use Tomcat by default
-	compile('org.springframework.boot.experimental:spring-boot-starter-web-reactive:0.1.0.BUILD-SNAPSHOT')
+	//compile('org.springframework.boot.experimental:spring-boot-starter-web-reactive:0.1.0.BUILD-SNAPSHOT')
+
+	// With Jetty
+	compile('org.springframework.boot.experimental:spring-boot-starter-web-reactive:0.1.0.BUILD-SNAPSHOT') {
+		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+	}
+        compile("org.springframework.boot:spring-boot-starter-jetty:${springBootVersion}")
 
 	compile "io.reactivex:rxjava:1.1.6"
 
@@ -58,12 +65,9 @@ dependencies {
 	compile "io.reactivex:rxnetty-http:0.5.2-SNAPSHOT"
     */
 
-        compile "org.apache.kafka:kafka-clients:0.10.0.0"
-        compile 'reactor-kafka:reactor-kafka-api:0.1.0.BUILD-SNAPSHOT'
 
-	compile "org.apache.hadoop:hadoop-client:2.6.0"
-	compile "com.couchbase.client:java-client:2.2.2"
-	compile "org.springframework.data:spring-data-elasticsearch:2.1.0.BUILD-SNAPSHOT"
+        compile 'org.apache.kafka:kafka-clients:0.10.0.0'
+        compile 'reactor-kafka:reactor-kafka-api:0.1.0.BUILD-SNAPSHOT'
 
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
